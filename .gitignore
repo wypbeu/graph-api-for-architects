@@ -1,0 +1,5 @@
+# Output files (generated per-run, not committed)
+output/*.md
+output/*.csv
+output/*.json
+!output/sample-report.md
