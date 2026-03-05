@@ -31,9 +31,10 @@ $report += ""
 # Secure Score
 $report += "## Microsoft Secure Score"
 try {
-    $scores = Get-MgSecuritySecureScore -Top 1 -Sort "createdDateTime desc"
-    if ($scores) {
-        $latest = $scores[0]
+    $latest = Get-MgSecuritySecureScore -Top 1 |
+        Sort-Object -Property CreatedDateTime -Descending |
+        Select-Object -First 1
+    if ($latest) {
         $pct = if ($latest.MaxScore -gt 0) {
             [math]::Round(($latest.CurrentScore / $latest.MaxScore) * 100, 1)
         } else { 0 }
@@ -46,8 +47,8 @@ try {
         $report += ""
 
         $improvements = $latest.ControlScores |
-            Where-Object { $_.Score -lt $_.ScoreInPercentage } |
-            Sort-Object @{Expression={$_.ScoreInPercentage - $_.Score}; Descending=$true} |
+            Where-Object { $_.Score -lt $_.Max } |
+            Sort-Object @{Expression={$_.Max - $_.Score}; Descending=$true} |
             Select-Object -First 5
 
         if ($improvements) {
@@ -55,8 +56,8 @@ try {
             $report += "| Control | Current | Max | Potential Gain |"
             $report += "|---------|--------:|----:|--------------:|"
             foreach ($i in $improvements) {
-                $gain = $i.ScoreInPercentage - $i.Score
-                $report += "| $($i.ControlName) | $($i.Score) | $($i.ScoreInPercentage) | $gain |"
+                $gain = $i.Max - $i.Score
+                $report += "| $($i.ControlName) | $($i.Score) | $($i.Max) | $gain |"
             }
             $report += ""
         }

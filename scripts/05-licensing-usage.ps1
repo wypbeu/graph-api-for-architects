@@ -28,12 +28,12 @@ $report += "# Licensing & Usage Report"
 $report += "Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Tenant: $((Get-MgContext).TenantId)"
 $report += ""
 
-# SKU friendly name lookup — extend for your tenant's SKUs
+# SKU friendly name lookup - extend for your tenant's SKUs
 $skuNames = @{
-    "ENTERPRISEPREMIUM"                = "Microsoft 365 E5"
-    "ENTERPRISEPACK"                   = "Microsoft 365 E3"
-    "SPE_E5"                           = "Microsoft 365 E5 (unified)"
-    "SPE_E3"                           = "Microsoft 365 E3 (unified)"
+    "SPE_E5"                           = "Microsoft 365 E5"
+    "SPE_E3"                           = "Microsoft 365 E3"
+    "ENTERPRISEPREMIUM"                = "Microsoft 365 E5 (legacy SKU)"
+    "ENTERPRISEPACK"                   = "Microsoft 365 E3 (legacy SKU)"
     "EMSPREMIUM"                       = "EMS E5"
     "Microsoft_365_Copilot"            = "Microsoft 365 Copilot"
     "SPB"                              = "Microsoft 365 Business Premium"
@@ -60,7 +60,9 @@ try {
         @{Name="Assigned"; Expression={$_.ConsumedUnits}},
         @{Name="Available"; Expression={$_.PrepaidUnits.Enabled - $_.ConsumedUnits}},
         @{Name="Utilisation"; Expression={
-            [math]::Round(($_.ConsumedUnits / $_.PrepaidUnits.Enabled) * 100, 1)
+            if ($_.PrepaidUnits.Enabled -gt 0) {
+                [math]::Round(($_.ConsumedUnits / $_.PrepaidUnits.Enabled) * 100, 1)
+            } else { 0 }
         }}
 
     $report += "| Licence | SKU | Purchased | Assigned | Available | Utilisation |"

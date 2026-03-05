@@ -79,13 +79,14 @@ try {
 # Privileged Access Review
 $report += "## Privileged Access Review"
 try {
-    # Graph limits $expand to one property per query
-    $roleAssignments = Get-MgRoleManagementDirectoryRoleAssignment -All -ExpandProperty "roleDefinition"
+    $roleAssignments = Get-MgRoleManagementDirectoryRoleAssignment -All
+    $roleDefinitions = Get-MgRoleManagementDirectoryRoleDefinition -All
 
     $privilegedUsers = foreach ($ra in $roleAssignments) {
+        $roleDef = $roleDefinitions | Where-Object { $_.Id -eq $ra.RoleDefinitionId }
         $principal = Get-MgDirectoryObject -DirectoryObjectId $ra.PrincipalId
         [PSCustomObject]@{
-            Role          = $ra.RoleDefinition.DisplayName
+            Role          = $roleDef.DisplayName
             Principal     = $principal.AdditionalProperties.displayName
             PrincipalType = $principal.AdditionalProperties.'@odata.type' -replace '#microsoft.graph.', ''
         }
