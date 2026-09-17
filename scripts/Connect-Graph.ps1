@@ -39,7 +39,8 @@ if ($ClientId -and $TenantId -and $CertificateThumbprint) {
         "User.Read.All", "Group.Read.All", "Device.Read.All",
         "DeviceManagementManagedDevices.Read.All", "Policy.Read.All",
         "RoleManagement.Read.Directory", "Application.Read.All",
-        "SecurityEvents.Read.All", "Reports.Read.All",
+        "SecurityEvents.Read.All", "SecurityAlert.Read.All", "AccessReview.Read.All",
+        "Reports.Read.All",
         "AuditLog.Read.All", "Directory.Read.All", "Organization.Read.All"
     )
     Connect-MgGraph -Scopes $scopes -NoWelcome
