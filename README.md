@@ -39,12 +39,30 @@ cd graph-api-for-architects/scripts
 
 # Or run a single section
 ./01-discovery.ps1
-
-# App-only auth (for automation)
-./Full-TenantAssessment.ps1 -ClientId "your-app-id" -TenantId "your-tenant-id" -ClientSecret "your-secret"
 ```
 
 Reports are written to the `output/` directory as markdown files.
+
+## Authentication
+
+Every script in `scripts/` dot-sources `Connect-Graph.ps1`, which supports three
+sign-in methods and passes `ClientId`, `TenantId`, `ClientSecret` and
+`CertificateThumbprint` straight through from its own parameters.
+
+```powershell
+# App-only auth, certificate (recommended for production automation)
+./Full-TenantAssessment.ps1 -ClientId "your-app-id" -TenantId "your-tenant-id" -CertificateThumbprint "your-cert-thumbprint"
+
+# App-only auth, client secret
+./Full-TenantAssessment.ps1 -ClientId "your-app-id" -TenantId "your-tenant-id" -ClientSecret "your-secret"
+```
+
+Use the certificate path for anything that runs unattended. A client secret is a
+plain string: it lands in shell history and process listings on any host that
+runs the script, and it lives in the app registration as a shared secret rather
+than a private key. A certificate thumbprint identifies a certificate already
+loaded in the local certificate store; the private key never appears on the
+command line.
 
 ## Related
 

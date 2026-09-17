@@ -9,7 +9,10 @@
 .PARAMETER TenantId
     Entra ID tenant ID. Required for app-only auth.
 .PARAMETER ClientSecret
-    Client secret value. Required for app-only auth.
+    Client secret value. Used for app-only auth if CertificateThumbprint is not supplied.
+.PARAMETER CertificateThumbprint
+    Thumbprint of a certificate in the local certificate store, bound to the app
+    registration. Recommended over ClientSecret for production automation.
 .PARAMETER OutputPath
     Directory for report output. Defaults to ../output relative to this script.
 #>
@@ -18,6 +21,7 @@ param(
     [string]$ClientId,
     [string]$TenantId,
     [string]$ClientSecret,
+    [string]$CertificateThumbprint,
     [string]$OutputPath = "$PSScriptRoot/../output"
 )
 
